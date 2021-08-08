@@ -165,3 +165,33 @@ def test_add_schwas_halant():
     names = [unicodedata.name(c) for c in text]
     actual = t.add_schwas(names)
     assert actual == expected
+
+
+def test_syncopate_schwas_word_final():
+    names = ['DEVANAGARI LETTER MA', 'ə', 'DEVANAGARI LETTER NA', 'ə']
+    expected = ['DEVANAGARI LETTER MA', 'ə', 'DEVANAGARI LETTER NA']
+    actual = t.syncopate_schwas(names)
+    assert actual == expected
+
+
+def test_syncopate_schwas_word_medial():
+    names = ['DEVANAGARI LETTER HA', 'ə', 'DEVANAGARI LETTER RA', 'ə', 'DEVANAGARI LETTER KA', 'ə',
+             'DEVANAGARI LETTER TA', 'ə']
+    expected = ['DEVANAGARI LETTER HA', 'ə', 'DEVANAGARI LETTER RA', 'DEVANAGARI LETTER KA', 'ə', 'DEVANAGARI LETTER TA']
+    actual = t.syncopate_schwas(names)
+    assert actual == expected
+
+
+def test_syncopate_schwas_short():
+    names = ['DEVANAGARI LETTER KA', 'ə']
+    expected = ['DEVANAGARI LETTER KA', 'ə']
+    actual = t.syncopate_schwas(names)
+    assert actual == expected
+
+
+def test_transcribe_ipa():
+    text = "प्रणाम मेरा नाम नमकीन है "
+    expected = "prəɳaːm meːraː naːm nəmkiːn ɦɛː"
+    actual = t.transcribe_to_ipa(text)
+    assert actual == expected
+

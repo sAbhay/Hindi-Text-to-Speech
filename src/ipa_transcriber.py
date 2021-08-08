@@ -36,6 +36,7 @@ def transcribe_to_ipa(text: str) -> str:
             if c in UNICODE_TO_IPA:
                 ipa_word += UNICODE_TO_IPA[c]
             else:
+                # this should never happen
                 if "DEVANAGARI" in c:
                     raise Exception(f"unhandled character at position {i}: {c}")
 
@@ -78,6 +79,9 @@ def transcribe_viramas(charnames: list) -> list:
 
 
 def transcribe_visargas(charnames: list) -> list:
+    if len(charnames) == 0:
+        return charnames
+
     cleaned = [charnames[0]]
     i = 1
     while i < len(charnames):
@@ -163,6 +167,9 @@ def syncopate_schwas(charnames: list) -> list:
     return cleaned
 
 def transcribe_chandrabindus_and_anuswaras(chars: list) -> list:
+    if len(chars) == 0:
+        return chars
+
     cleaned = [chars[0]]
     i = 1
     while i < len(chars):
