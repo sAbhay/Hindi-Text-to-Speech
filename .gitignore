@@ -53,3 +53,5 @@ coverage.xml
 docs/_build/
 *.pyc
 *.pyc
+src/__pycache__/ipa_transcriber.cpython-38.pyc
+*.pyc
