@@ -29,7 +29,7 @@ def transcribe_to_ipa(text: str) -> str:
         logging.debug(f"Delete Schwas: {chars}")
         chars = transcribe_visargas(chars)
         logging.debug(f"Visargas: {chars}")
-        chars = transcribe_chandrabindus(chars)
+        chars = transcribe_chandrabindus_and_anuswaras(chars)
         logging.debug(f"Chandrabindus: {chars}")
 
         for i, c in enumerate(chars):
@@ -62,13 +62,18 @@ def transcribe_viramas(charnames: list) -> list:
             continue
 
         elif charnames[i] == 'DEVANAGARI SIGN VIRAMA':
-            cleaned[-1] = UNICODE_TO_IPA[charnames[i-1]] + UNICODE_TO_IPA[charnames[i+1]]
+            # in case of existing consonant cluster
+            if "DEVANAGARI" not in cleaned[-1]:
+                cleaned[-1] = cleaned[-1] + UNICODE_TO_IPA[charnames[i + 1]]
+            else:
+                cleaned[-1] = UNICODE_TO_IPA[charnames[i-1]] + UNICODE_TO_IPA[charnames[i+1]]
             i += 2
             continue
 
         cleaned.append(charnames[i])
         i += 1
-    cleaned += charnames[-1:]
+    if i != len(charnames):
+        cleaned += charnames[-1:]
     return cleaned
 
 
@@ -104,21 +109,26 @@ def transcribe_nuktas(charnames: list) -> list:
         if charnames[i+1] == 'DEVANAGARI SIGN NUKTA':
             if charnames[i] == 'DEVANAGARI LETTER KHA':
                 cleaned[-1] = 'x'
-            elif charnames[i] == 'DEVANAGARI LETTER KHA':
+            elif charnames[i] == 'DEVANAGARI LETTER JHA':
                 cleaned[-1] = 'ʒ'
             i += 2
+            continue
         i += 1
-    cleaned += charnames[-1:]
+    if charnames[-1] != 'DEVANAGARI SIGN NUKTA':
+        cleaned += charnames[-1:]
     return cleaned
 
 
 def add_schwas(charnames: list) -> list:
     cleaned = []
+    i = 0
     for i in range(len(charnames)):
         cleaned.append(charnames[i])
         if ("LETTER" in charnames[i] and "VOWEL" not in charnames[i]) or charnames[i] not in UNICODE_TO_IPA:
             if i == len(charnames)-1:
                 cleaned.append('ə')
+            elif "VIRAMA" in charnames[i+1]:
+                continue
             elif "VOWEL" not in charnames[i+1] or charnames[i+1] not in UNICODE_TO_IPA:
                 cleaned.append('ə')
     return cleaned
@@ -150,18 +160,24 @@ def syncopate_schwas(charnames: list) -> list:
     cleaned += charnames[-2:]
     return cleaned
 
-def transcribe_chandrabindus(chars: list) -> list:
+def transcribe_chandrabindus_and_anuswaras(chars: list) -> list:
     cleaned = [chars[0]]
     i = 1
     while i < len(chars):
-        if chars[i] == 'DEVANAGARI SIGN CANDRABINDU':
+        if chars[i] == 'DEVANAGARI SIGN CANDRABINDU' or chars[i] == 'DEVANAGARI SIGN ANUSVARA':
             nasalized = ""
             if chars[i-1] == 'ə':
                 nasalized = "̃" + 'ə'
             elif "VOWEL" in chars[i-1]:
                 nasalized = '̃' + UNICODE_TO_IPA[chars[i-1]]
             else:
-                raise ValueError(f"invalid input, non-vowel {chars[i-1]} precedes chandrabindu")
+                if chars[i] == 'DEVANAGARI SIGN ANUSVARA':
+                    if i < len(chars)-1 and chars[i-1] == 'ə':
+                        nasalized += 'm'
+                    else:
+                        nasalized += 'n'
+                else:
+                    raise ValueError(f"invalid input, non-vowel {chars[i-1]} precedes chandrabindu")
             del cleaned[-1]
             cleaned.append(nasalized)
             i += 1
