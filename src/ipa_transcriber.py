@@ -1,6 +1,8 @@
 import unicodedata
 from constants import *
 import logging
+from ipapy import UNICODE_TO_IPA as UNICODE_TO_IPA_CHAR
+from ipapy.ipachar import IPAConsonant
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -31,6 +33,8 @@ def transcribe_to_ipa(text: str) -> str:
         logging.debug(f"Visargas: {chars}")
         chars = transcribe_chandrabindus_and_anuswaras(chars)
         logging.debug(f"Chandrabindus: {chars}")
+        chars = assimilate_nasal_place(chars)
+        logging.debug(f"Nasal place assimilation: {chars}")
 
         for i, c in enumerate(chars):
             if c in UNICODE_TO_IPA:
@@ -194,4 +198,30 @@ def transcribe_chandrabindus_and_anuswaras(chars: list) -> list:
             continue
         cleaned.append(chars[i])
         i += 1
+    return cleaned
+
+
+def assimilate_nasal_place(word: str) -> str:
+    cleaned = ""
+    for i, c in enumerate(word):
+        to_add = c
+        if c == 'n':
+            if i < len(word)-1:
+                next = UNICODE_TO_IPA_CHAR[word[i+1]]
+                if type(next) == IPAConsonant and word[i+1] != 'n':
+                    if 'bilabial' in next.descriptors:
+                        to_add = 'm'
+                    if 'labio-dental' in next.descriptors:
+                        to_add = 'ɱ'
+                    if 'alveolar' in next.descriptors:
+                        to_add = 'n'
+                    if 'retroflex' in next.descriptors:
+                        to_add = 'ɳ'
+                    if 'alveo-palatal' in next.descriptors or 'palatal' in next.descriptors:
+                        to_add = 'ɲ'
+                    if 'velar' in next.descriptors:
+                        to_add = 'ŋ'
+                    if 'uvular' in next.descriptors:
+                        to_add = 'ɴ'
+        cleaned += to_add
     return cleaned

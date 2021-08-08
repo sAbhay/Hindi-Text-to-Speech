@@ -1,5 +1,4 @@
 import ipa_transcriber as t
-import unicodedata
 
 vowels = "क का कि की के कै कु कू को कौ कं काँ कः कृ "
 vowel_letters = "अ आ इ ई ए ऐ उ ऊ ओ औ ऋ "

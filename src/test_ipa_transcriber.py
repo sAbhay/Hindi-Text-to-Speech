@@ -189,8 +189,15 @@ def test_syncopate_schwas_short():
     assert actual == expected
 
 
+def test_nasal_place_assimilation():
+    text = "anpanfant̪anɖʱanjanganɢ"
+    expected = "ampaɱfant̪aɳɖʱaɲjaŋgaɴɢ"
+    actual = t.assimilate_nasal_place(text)
+    assert actual == expected
+
+
 def test_transcribe_ipa():
-    text = "प्रणाम मेरा नाम नमकीन है "
+    text = "प्रणाम मेरा नाम और अंक नमकीन हैं "
     expected = "prəɳaːm meːraː naːm nəmkiːn ɦɛː"
     actual = t.transcribe_to_ipa(text)
     assert actual == expected
