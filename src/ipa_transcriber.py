@@ -33,8 +33,6 @@ def transcribe_to_ipa(text: str) -> str:
         logging.debug(f"Visargas: {chars}")
         chars = transcribe_chandrabindus_and_anuswaras(chars)
         logging.debug(f"Chandrabindus: {chars}")
-        chars = assimilate_nasal_place(chars)
-        logging.debug(f"Nasal place assimilation: {chars}")
 
         for i, c in enumerate(chars):
             if c in UNICODE_TO_IPA:
@@ -46,6 +44,9 @@ def transcribe_to_ipa(text: str) -> str:
 
                 # already converted in earlier steps
                 ipa_word += c
+
+        ipa_word = assimilate_nasal_place(ipa_word)
+        logging.debug(f"Nasal place assimilation: {ipa_word}")
         ipa_words.append(ipa_word)
 
     ipa = " ".join(ipa_words)
@@ -132,7 +133,8 @@ def add_schwas(charnames: list) -> list:
     i = 0
     while i < len(charnames):
         cleaned.append(charnames[i])
-        if ("LETTER" in charnames[i] and "VOWEL" not in charnames[i]) or charnames[i] not in UNICODE_TO_IPA:
+        if ("LETTER" in charnames[i] and "VOWEL" not in charnames[i] and UNICODE_NAMES[charnames[i]] not in VOWEL_LETTERS) \
+                or (charnames[i] not in UNICODE_TO_IPA and "DEVANAGARI" not in charnames[i]):
             if i == len(charnames)-1:
                 cleaned.append('ə')
             elif "VIRAMA" in charnames[i+1]:
@@ -180,7 +182,7 @@ def transcribe_chandrabindus_and_anuswaras(chars: list) -> list:
         if chars[i] == 'DEVANAGARI SIGN CANDRABINDU' or chars[i] == 'DEVANAGARI SIGN ANUSVARA':
             if chars[i-1] == 'ə':
                 nasalized = "̃" + 'ə'
-            elif "VOWEL" in chars[i-1]:
+            elif "VOWEL" in chars[i-1] or UNICODE_NAMES[chars[i-1]] in VOWEL_LETTERS:
                 nasalized = '̃' + UNICODE_TO_IPA[chars[i-1]]
             else:
                 raise ValueError(f"invalid input, non-vowel {chars[i-1]} precedes chandrabindu or bindu")

@@ -7,7 +7,7 @@ loans = "क़ ख़ ग़ ज़ झ़ फ़ "
 conjunctions = "ज्ञ क्ष त्र श्र "
 virama = "क्र क् "
 sample_text = "प्रणाम मेरा नाम नमकीन है"
-text = "शान्तिः"
+text = sample_text
 
 ipa = t.transcribe_to_ipa(text)
 print(ipa)

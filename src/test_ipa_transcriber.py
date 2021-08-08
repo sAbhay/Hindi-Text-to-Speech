@@ -198,7 +198,7 @@ def test_nasal_place_assimilation():
 
 def test_transcribe_ipa():
     text = "प्रणाम मेरा नाम और अंक नमकीन हैं "
-    expected = "prəɳaːm meːraː naːm nəmkiːn ɦɛː"
+    expected = "prəɳaːm meːraː naːm ɔːr ̃əŋk nəmkiːn ɦ̃ɛː"
     actual = t.transcribe_to_ipa(text)
     assert actual == expected
 
