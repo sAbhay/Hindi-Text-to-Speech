@@ -57,7 +57,7 @@ def transcribe_viramas(charnames: list) -> list:
         if charnames[i-1] == 'DEVANAGARI LETTER JA' \
                 and charnames[i] == 'DEVANAGARI SIGN VIRAMA' \
                 and charnames[i+1] == 'DEVANAGARI LETTER NYA':
-            cleaned[i] = 'gj'
+            cleaned[-1] = 'gj'
             i += 2
             continue
 
