@@ -9,7 +9,11 @@ logging.basicConfig(level=logging.DEBUG)
 def transcribe_to_ipa(text: str) -> str:
     words = text.split(" ")
     ipa_words = []
-    for word in words:
+    for i, word in enumerate(words):
+        if len(word) == 0:
+            logging.debug(f"empty word at position {i}")
+            continue
+
         ipa_word = ""
         names = [unicodedata.name(c) for c in word]
         logging.debug(f"Names: {names}")
@@ -24,7 +28,9 @@ def transcribe_to_ipa(text: str) -> str:
         chars = syncopate_schwas(chars)
         logging.debug(f"Delete Schwas: {chars}")
         chars = transcribe_visargas(chars)
-        logging.debug(f"Visargas: {chars}\n")
+        logging.debug(f"Visargas: {chars}")
+        chars = transcribe_chandrabindus(chars)
+        logging.debug(f"Chandrabindus: {chars}")
 
         for i, c in enumerate(chars):
             if c in UNICODE_TO_IPA:
@@ -42,6 +48,9 @@ def transcribe_to_ipa(text: str) -> str:
 
 
 def transcribe_viramas(charnames: list) -> list:
+    if len(charnames) < 3:
+        return charnames
+
     cleaned = [charnames[0]]
     i = 1
     while i < len(charnames)-1:
@@ -139,4 +148,24 @@ def syncopate_schwas(charnames: list) -> list:
         cleaned.append(charnames[i])
         i += 1
     cleaned += charnames[-2:]
+    return cleaned
+
+def transcribe_chandrabindus(chars: list) -> list:
+    cleaned = [chars[0]]
+    i = 1
+    while i < len(chars):
+        if chars[i] == 'DEVANAGARI SIGN CANDRABINDU':
+            nasalized = ""
+            if chars[i-1] == 'ə':
+                nasalized = "̃" + 'ə'
+            elif "VOWEL" in chars[i-1]:
+                nasalized = '̃' + UNICODE_TO_IPA[chars[i-1]]
+            else:
+                raise ValueError(f"invalid input, non-vowel {chars[i-1]} precedes chandrabindu")
+            del cleaned[-1]
+            cleaned.append(nasalized)
+            i += 1
+            continue
+        cleaned.append(chars[i])
+        i += 1
     return cleaned
