@@ -79,16 +79,16 @@ def transcribe_visargas(charnames: list) -> list:
         if charnames[i] == 'DEVANAGARI SIGN VISARGA':
             if "VOWEL" in charnames[i-1]:
                 realization = UNICODE_TO_IPA[charnames[i-1]] + 'h'
-                if i == len(charnames) or charnames[i+1] == 'SPACE':
+                if i == len(charnames)-1:
                     realization += UNICODE_TO_IPA[charnames[i-1]]
                     if realization[-1] == "ː":
                         realization = realization[:-1]
+                cleaned[-1] = realization
             else:
                 realization = 'əhə'
                 if charnames[i-1] == 'ə':
                     realization = 'hə'
-
-            cleaned.append(realization)
+                cleaned.append(realization)
             i += 1
             continue
         cleaned.append(charnames[i])

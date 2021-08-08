@@ -31,3 +31,32 @@ def test_transcribe_viramas_gya():
     names = [unicodedata.name(c) for c in text]
     actual = t.transcribe_viramas(names)
     assert actual == expected
+
+def test_transcribe_visarga_word_final_consonant():
+    text = "नमः"
+    chars = [unicodedata.name(c) for c in text]
+    expected = ['DEVANAGARI LETTER NA', 'DEVANAGARI LETTER MA', 'əhə']
+    actual = t.transcribe_visargas(chars)
+    assert actual == expected
+
+def test_transcribe_visarga_word_final_schwa():
+    text = "नमः"
+    chars = [unicodedata.name(c) for c in text]
+    chars.insert(-1, 'ə')
+    expected = ['DEVANAGARI LETTER NA', 'DEVANAGARI LETTER MA', 'ə', 'hə']
+    actual = t.transcribe_visargas(chars)
+    assert actual == expected
+
+def test_transcribe_visarga_word_final_long_vowel():
+    text = "वाः"
+    chars = [unicodedata.name(c) for c in text]
+    expected = ['DEVANAGARI LETTER VA', 'aːha']
+    actual = t.transcribe_visargas(chars)
+    assert actual == expected
+
+def test_transcribe_visarga_medial():
+    text = "दुःख"
+    chars = [unicodedata.name(c) for c in text]
+    expected = ['DEVANAGARI LETTER DA', 'ʊh', 'DEVANAGARI LETTER KHA']
+    actual = t.transcribe_visargas(chars)
+    assert actual == expected
