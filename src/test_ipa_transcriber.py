@@ -1,5 +1,6 @@
 import unicodedata
 import ipa_transcriber as t
+import pytest
 
 
 def test_transcribe_viramas_word_initial():
@@ -95,4 +96,72 @@ def test_transcribe_nuktas_non_final():
     chars = [unicodedata.name(c) for c in text]
     expected = ['x', 'DEVANAGARI VOWEL SIGN UU', 'DEVANAGARI LETTER NA']
     actual = t.transcribe_nuktas(chars)
+    assert actual == expected
+
+
+def test_transcribe_chandrabindus_and_anuswaras_final_m():
+    chars = ["DEVANAGARI LETTER E", "DEVANAGARI LETTER VA", 'ə', "DEVANAGARI SIGN ANUSVARA"]
+    expected = ['DEVANAGARI LETTER E', 'DEVANAGARI LETTER VA', '̃əm']
+    actual = t.transcribe_chandrabindus_and_anuswaras(chars)
+    assert actual == expected
+
+
+def test_transcribe_chandrabindus_and_anuswaras_final_vowel_nasalised():
+    chars = ["DEVANAGARI LETTER MA", 'DEVANAGARI VOWEL SIGN E', "DEVANAGARI SIGN ANUSVARA"]
+    expected = ['DEVANAGARI LETTER MA', '̃eː']
+    actual = t.transcribe_chandrabindus_and_anuswaras(chars)
+    assert actual == expected
+
+
+def test_transcribe_chandrabindus_and_anuswaras_medial_anusvara():
+    chars = ["DEVANAGARI LETTER HA", 'DEVANAGARI VOWEL SIGN I', "DEVANAGARI SIGN ANUSVARA", "DEVANAGARI LETTER DA",
+             'DEVANAGARI VOWEL SIGN II']
+    expected = ['DEVANAGARI LETTER HA', '̃ɪn', "DEVANAGARI LETTER DA", 'DEVANAGARI VOWEL SIGN II']
+    actual = t.transcribe_chandrabindus_and_anuswaras(chars)
+    assert actual == expected
+
+
+def test_transcribe_chandrabindus_and_anuswaras_medial_chandrabindu():
+    chars = ["DEVANAGARI LETTER SA", 'DEVANAGARI VOWEL SIGN AA', "DEVANAGARI SIGN CANDRABINDU", "DEVANAGARI LETTER PA"]
+    expected = ['DEVANAGARI LETTER SA', '̃aː', "DEVANAGARI LETTER PA"]
+    actual = t.transcribe_chandrabindus_and_anuswaras(chars)
+    assert actual == expected
+
+
+def test_transcribe_chandrabindus_and_anuswaras_medial_chandrabindu_vowel():
+    text = "कुँआ"
+    chars = [unicodedata.name(c) for c in text]
+    expected = ['DEVANAGARI LETTER KA', '̃ʊ', 'DEVANAGARI LETTER AA']
+    actual = t.transcribe_chandrabindus_and_anuswaras(chars)
+    assert actual == expected
+
+
+def test_transcribe_chandrabindus_and_anuswaras_final_chandrabindu():
+    text = "चिड़ियाँ"
+    chars = [unicodedata.name(c) for c in text]
+    expected = chars
+    expected[-1] = '̃aː'
+    actual = t.transcribe_chandrabindus_and_anuswaras(chars)
+    assert actual == expected
+
+
+def test_transcribe_chandrabindus_and_anuswaras_invalid():
+    chars = ["DEVANAGARI LETTER SA",  "DEVANAGARI SIGN CANDRABINDU", "DEVANAGARI LETTER PA"]
+    with pytest.raises(ValueError):
+        t.transcribe_chandrabindus_and_anuswaras(chars)
+
+
+def test_add_schwas():
+    text = "कम"
+    expected = ['DEVANAGARI LETTER KA', 'ə', 'DEVANAGARI LETTER MA', 'ə']
+    names = [unicodedata.name(c) for c in text]
+    actual = t.add_schwas(names)
+    assert actual == expected
+
+
+def test_add_schwas_halant():
+    text = "रक्"
+    expected = ['DEVANAGARI LETTER RA', 'ə', 'DEVANAGARI LETTER KA']
+    names = [unicodedata.name(c) for c in text]
+    actual = t.add_schwas(names)
     assert actual == expected

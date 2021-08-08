@@ -122,15 +122,17 @@ def transcribe_nuktas(charnames: list) -> list:
 def add_schwas(charnames: list) -> list:
     cleaned = []
     i = 0
-    for i in range(len(charnames)):
+    while i < len(charnames):
         cleaned.append(charnames[i])
         if ("LETTER" in charnames[i] and "VOWEL" not in charnames[i]) or charnames[i] not in UNICODE_TO_IPA:
             if i == len(charnames)-1:
                 cleaned.append('ə')
             elif "VIRAMA" in charnames[i+1]:
+                i += 2
                 continue
             elif "VOWEL" not in charnames[i+1] or charnames[i+1] not in UNICODE_TO_IPA:
                 cleaned.append('ə')
+        i += 1
     return cleaned
 
 
@@ -165,19 +167,20 @@ def transcribe_chandrabindus_and_anuswaras(chars: list) -> list:
     i = 1
     while i < len(chars):
         if chars[i] == 'DEVANAGARI SIGN CANDRABINDU' or chars[i] == 'DEVANAGARI SIGN ANUSVARA':
-            nasalized = ""
             if chars[i-1] == 'ə':
                 nasalized = "̃" + 'ə'
             elif "VOWEL" in chars[i-1]:
                 nasalized = '̃' + UNICODE_TO_IPA[chars[i-1]]
             else:
-                if chars[i] == 'DEVANAGARI SIGN ANUSVARA':
-                    if i < len(chars)-1 and chars[i-1] == 'ə':
+                raise ValueError(f"invalid input, non-vowel {chars[i-1]} precedes chandrabindu or bindu")
+
+            if chars[i] == 'DEVANAGARI SIGN ANUSVARA':
+                if i == len(chars)-1:
+                    if chars[i-1] == 'ə':
                         nasalized += 'm'
-                    else:
-                        nasalized += 'n'
-                else:
-                    raise ValueError(f"invalid input, non-vowel {chars[i-1]} precedes chandrabindu")
+                elif "LETTER" in chars[i+1] and UNICODE_NAMES[chars[i+1]] not in VOWEL_LETTERS:
+                    nasalized += 'n'
+
             del cleaned[-1]
             cleaned.append(nasalized)
             i += 1
