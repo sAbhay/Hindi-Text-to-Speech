@@ -10,6 +10,7 @@ def test_transcribe_viramas_word_initial():
     actual = t.transcribe_viramas(names)
     assert actual == expected
 
+
 def test_transcribe_viramas_word_final():
     text = "पत्र"
     expected = ["DEVANAGARI LETTER PA", 't̪r']
@@ -33,12 +34,14 @@ def test_transcribe_viramas_multi_cluster():
     actual = t.transcribe_viramas(names)
     assert actual == expected
 
+
 def test_transcribe_viramas_gya():
     text = "ज्ञान"
     expected = ['gj', 'DEVANAGARI VOWEL SIGN AA', 'DEVANAGARI LETTER NA']
     names = [unicodedata.name(c) for c in text]
     actual = t.transcribe_viramas(names)
     assert actual == expected
+
 
 def test_transcribe_viramas_short():
     text = "क्"
@@ -48,12 +51,14 @@ def test_transcribe_viramas_short():
     actual = t.transcribe_viramas(names)
     assert actual == expected
 
+
 def test_transcribe_visarga_word_final_consonant():
     text = "नमः"
     chars = [unicodedata.name(c) for c in text]
     expected = ['DEVANAGARI LETTER NA', 'DEVANAGARI LETTER MA', 'əhə']
     actual = t.transcribe_visargas(chars)
     assert actual == expected
+
 
 def test_transcribe_visarga_word_final_schwa():
     text = "नमः"
@@ -63,12 +68,14 @@ def test_transcribe_visarga_word_final_schwa():
     actual = t.transcribe_visargas(chars)
     assert actual == expected
 
+
 def test_transcribe_visarga_word_final_long_vowel():
     text = "वाः"
     chars = [unicodedata.name(c) for c in text]
     expected = ['DEVANAGARI LETTER VA', 'aːha']
     actual = t.transcribe_visargas(chars)
     assert actual == expected
+
 
 def test_transcribe_visarga_medial():
     text = "दुःख"
@@ -77,6 +84,7 @@ def test_transcribe_visarga_medial():
     actual = t.transcribe_visargas(chars)
     assert actual == expected
 
+
 def test_transcribe_nuktas_kh():
     text = "ख़"
     chars = [unicodedata.name(c) for c in text]
@@ -84,12 +92,14 @@ def test_transcribe_nuktas_kh():
     actual = t.transcribe_nuktas(chars)
     assert actual == expected
 
+
 def test_transcribe_nuktas_zh():
     text = "झ़"
     chars = [unicodedata.name(c) for c in text]
     expected = ['ʒ']
     actual = t.transcribe_nuktas(chars)
     assert actual == expected
+
 
 def test_transcribe_nuktas_non_final():
     text = "ख़ून"
