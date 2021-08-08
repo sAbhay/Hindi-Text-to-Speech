@@ -24,7 +24,7 @@ def transcribe_to_ipa(text: str) -> str:
         chars = syncopate_schwas(chars)
         logging.debug(f"Delete Schwas: {chars}")
         chars = transcribe_visargas(chars)
-        logging.debug(f"Visargas: {chars}")
+        logging.debug(f"Visargas: {chars}\n")
 
         for i, c in enumerate(chars):
             if c in UNICODE_TO_IPA:
@@ -71,13 +71,16 @@ def transcribe_visargas(charnames: list) -> list:
             if "VOWEL" in charnames[i-1]:
                 realization = UNICODE_TO_IPA[charnames[i-1]] + 'h'
                 if i == len(charnames) or charnames[i+1] == 'SPACE':
-                    realization += UNICODE_TO_IPA[charnames[i - 1]]
+                    realization += UNICODE_TO_IPA[charnames[i-1]]
                     if realization[-1] == "ː":
                         realization = realization[:-1]
             else:
                 realization = 'əhə'
+                if charnames[i-1] == 'ə':
+                    realization = 'hə'
 
             cleaned.append(realization)
+            i += 1
             continue
         cleaned.append(charnames[i])
         i += 1
@@ -113,20 +116,26 @@ def add_schwas(charnames: list) -> list:
 
 
 def syncopate_schwas(charnames: list) -> list:
-    if len(charnames) < 2:
+    if len(charnames) <= 2:
+        return charnames
+
+    # delete final schwa unless final consonant cluster produced
+    if charnames[-1] == 'ə' and not (len(charnames[-2]) > 1 and 'DEVANAGARI' not in charnames[-2]):
+        charnames = charnames[:-1]
+
+    if len(charnames) < 5:
         return charnames
 
     cleaned = charnames[:2]
     i = 2
-    if charnames[-1] == 'ə' and ("DEVANAGARI" not in charnames[-2] and len(charnames[-2]) > 1):
-        charnames = charnames[:-1]
     while i < len(charnames)-2:
-        if "VOWEL" in charnames[i-2] \
-                and ("LETTER" in charnames[i-1] and "VOWEL" not in charnames[i-1]) \
-                and ("LETTER" in charnames[i+1] and "VOWEL" not in charnames[i+1]) \
-                and "VOWEL" in charnames[i+2]:
-            i += 1
-            continue
+        if charnames[i] == 'ə':
+            if ("VOWEL" in charnames[i-2] or charnames[i-2] == 'ə') \
+                    and (("LETTER" in charnames[i-1] and "VOWEL" not in charnames[i-1]) or ('DEVANAGARI' not in charnames[-2] and len(charnames[-2]) > 1)) \
+                    and (("LETTER" in charnames[i+1] and "VOWEL" not in charnames[i+1]) or ('DEVANAGARI' not in charnames[-2] and len(charnames[-2]) > 1)) \
+                    and ("VOWEL" in charnames[i+2] or charnames[i-2] == 'ə'):
+                i += 1
+                continue
         cleaned.append(charnames[i])
         i += 1
     cleaned += charnames[-2:]
