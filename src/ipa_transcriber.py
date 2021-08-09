@@ -176,6 +176,7 @@ def syncopate_schwas(charnames: list) -> list:
     cleaned += charnames[-2:]
     return cleaned
 
+
 def transcribe_chandrabindus_and_anuswaras(chars: list) -> list:
     if len(chars) == 0:
         return chars
@@ -291,4 +292,5 @@ def add_suprasegmental_stress(word: str) -> str:
         stress_index = heaviest_indices[-1]
 
     syllables[stress_index] = 'ˈ' + syllables[stress_index]
-    return '.'.join(syllables)
+    stressed_word = '.'.join(syllables) + word[-1]
+    return stressed_word

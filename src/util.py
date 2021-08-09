@@ -1,6 +1,6 @@
 from ipapy import UNICODE_TO_IPA as UNICODE_TO_IPA_CHAR
 from constants import *
-from enum import Enum
+from enum import IntEnum
 
 
 def is_long_vowel(c1: str, c2: str) -> bool:
@@ -10,13 +10,14 @@ def is_long_vowel(c1: str, c2: str) -> bool:
     return False
 
 
-class Weight(Enum):
+class Weight(IntEnum):
     LIGHT = 1
     HEAVY = 2
     EXTRA_HEAVY = 3
 
+
 def define_syllable_weight(syllable: str) -> Weight:
-    if "vowel" in UNICODE_TO_IPA_CHAR[syllable[-1]].descriptors and not is_long_vowel(syllable[-2], syllable[-1]):
+    if len(syllable) < 2 or ("vowel" in UNICODE_TO_IPA_CHAR[syllable[-1]].descriptors and not is_long_vowel(syllable[-2], syllable[-1])):
         return Weight.LIGHT
     if len(syllable) >= 2:
         if is_long_vowel(syllable[-2], syllable[-1]) or \

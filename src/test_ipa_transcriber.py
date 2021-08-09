@@ -256,6 +256,34 @@ def test_add_syllable_boundaries_polysyllabic():
     assert actual == expected
 
 
+def test_add_suprasegmental_stress():
+    text = "prə.ɳaːm"
+    expected = "prə.ˈɳaːm"
+    actual = t.add_suprasegmental_stress(text)
+    assert actual == expected
+
+
+def test_add_suprasegmental_stress_all_light():
+    text = "sə.mɪ.tɪ"
+    expected = "sə.ˈmɪ.tɪ"
+    actual = t.add_suprasegmental_stress(text)
+    assert actual == expected
+
+
+def test_add_suprasegmental_stress_extra_heavy():
+    text = "aːs.maːn.dʒaːɦ"
+    expected = "aːs.ˈmaːn.dʒaːɦ"
+    actual = t.add_suprasegmental_stress(text)
+    assert actual == expected
+
+
+def test_add_suprasegmental_stress_repeats():
+    text = "roː.zaː.naː"
+    expected = "roː.ˈzaː.naː"
+    actual = t.add_suprasegmental_stress(text)
+    assert actual == expected
+
+
 def test_transcribe_ipa():
     text = "प्रणाम मेरा नाम और अंक नमकीन हैं "
     expected = "prə.ɳaːm meː.raː naːm ɔːr ̃əŋk nəm.kiːn ɦ̃ɛː"
