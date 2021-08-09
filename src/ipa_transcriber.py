@@ -3,6 +3,7 @@ from constants import *
 import logging
 from ipapy import UNICODE_TO_IPA as UNICODE_TO_IPA_CHAR
 from ipapy.ipachar import IPAConsonant, IPAVowel
+import util
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -136,7 +137,7 @@ def add_schwas(charnames: list) -> list:
     i = 0
     while i < len(charnames):
         cleaned.append(charnames[i])
-        if ("LETTER" in charnames[i] and "VOWEL" not in charnames[i] and UNICODE_NAMES[charnames[i]] not in VOWEL_LETTERS) \
+        if util.is_consonant(charnames[i]) \
                 or (charnames[i] not in UNICODE_TO_IPA and "DEVANAGARI" not in charnames[i]):
             if i == len(charnames)-1:
                 cleaned.append('ə')
@@ -185,7 +186,7 @@ def transcribe_chandrabindus_and_anuswaras(chars: list) -> list:
         if chars[i] == 'DEVANAGARI SIGN CANDRABINDU' or chars[i] == 'DEVANAGARI SIGN ANUSVARA':
             if chars[i-1] == 'ə':
                 nasalized = "̃" + 'ə'
-            elif "VOWEL" in chars[i-1] or UNICODE_NAMES[chars[i-1]] in VOWEL_LETTERS:
+            elif util.is_vowel(chars[i-1]):
                 nasalized = '̃' + UNICODE_TO_IPA[chars[i-1]]
             else:
                 raise ValueError(f"invalid input, non-vowel {chars[i-1]} precedes chandrabindu or bindu")
@@ -194,7 +195,7 @@ def transcribe_chandrabindus_and_anuswaras(chars: list) -> list:
                 if i == len(chars)-1:
                     if chars[i-1] == 'ə':
                         nasalized += 'm'
-                elif "LETTER" in chars[i+1] and UNICODE_NAMES[chars[i+1]] not in VOWEL_LETTERS:
+                elif util.is_consonant(chars[i+1]):
                     nasalized += 'n'
 
             del cleaned[-1]
@@ -267,6 +268,4 @@ def add_syllable_boundaries(word: str) -> str:
             contains_vowel = True
         else:
             syllable += c
-
-
     return '.'.join(syllables)
