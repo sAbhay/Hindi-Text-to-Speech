@@ -269,3 +269,26 @@ def add_syllable_boundaries(word: str) -> str:
         else:
             syllable += c
     return '.'.join(syllables)
+
+
+def add_suprasegmental_stress(word: str) -> str:
+    syllables = word[:-1].split('.')
+    weights = []
+    for syllable in syllables:
+        weights.append(util.define_syllable_weight(syllable))
+
+    if all([weight == util.Weight.LIGHT for weight in weights]):
+        stress_index = len(syllables)-2
+    else:
+        heaviest_weight = util.Weight.HEAVY
+        heaviest_indices = []
+        for i, weight in enumerate(weights):
+            if weight == heaviest_weight:
+                heaviest_indices.append(i)
+            if weight > heaviest_weight:
+                heaviest_weight = weight
+                heaviest_indices = [i]
+        stress_index = heaviest_indices[-1]
+
+    syllables[stress_index] = 'ˈ' + syllables[stress_index]
+    return '.'.join(syllables)
