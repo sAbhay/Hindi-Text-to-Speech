@@ -85,6 +85,13 @@ def test_transcribe_visarga_medial():
     assert actual == expected
 
 
+def test_transcribe_visarga_empty():
+    chars = []
+    expected = chars
+    actual = t.transcribe_visargas(chars)
+    assert actual == expected
+
+
 def test_transcribe_nuktas_kh():
     text = "ख़"
     chars = [unicodedata.name(c) for c in text]
@@ -159,6 +166,13 @@ def test_transcribe_chandrabindus_and_anuswaras_invalid():
     chars = ["DEVANAGARI LETTER SA",  "DEVANAGARI SIGN CANDRABINDU", "DEVANAGARI LETTER PA"]
     with pytest.raises(ValueError):
         t.transcribe_chandrabindus_and_anuswaras(chars)
+
+
+def test_transcribe_chandrabindus_and_anuswaras_empty():
+    chars = []
+    expected = chars
+    actual = t.transcribe_chandrabindus_and_anuswaras(chars)
+    assert actual == expected
 
 
 def test_add_schwas():
@@ -289,4 +303,3 @@ def test_transcribe_ipa():
     expected = "prə.ɳaːm meː.raː naːm ɔːr ̃əŋk nəm.kiːn ɦ̃ɛː"
     actual = t.transcribe_to_ipa(text)
     assert actual == expected
-
