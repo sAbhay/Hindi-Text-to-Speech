@@ -47,10 +47,9 @@ def transcribe_to_ipa(text: str) -> str:
 
         ipa_word = assimilate_nasal_place(ipa_word)
         logging.debug(f"Nasal place assimilation: {ipa_word}")
-        ipa_words.append(ipa_word)
-
         ipa_word = add_syllable_boundaries(ipa_word)
         logging.debug(f"Syllable boundaries: {ipa_word}")
+
         ipa_words.append(ipa_word)
 
     ipa = " ".join(ipa_words)
@@ -249,7 +248,6 @@ def add_syllable_boundaries(word: str) -> str:
             while next_char is None or (
                     "vowel" not in next_char.descriptors and "consonant" not in next_char.descriptors):
                 if i+1+skip == len(word):
-                    syllable += c
                     break
                 next_char = UNICODE_TO_IPA_CHAR[word[i+1+skip]]
                 skip += 1
@@ -258,6 +256,11 @@ def add_syllable_boundaries(word: str) -> str:
                     syllables.append(syllable)
                     syllable = ""
                     contains_vowel = False
+                elif "consonant" in next_char.descriptors:
+                    if syllable == "" or "consonant" in UNICODE_TO_IPA_CHAR[syllable[-1]].descriptors:
+                        syllables.append(syllable)
+                        syllable = ""
+                        contains_vowel = False
             syllable += c
         elif "vowel" in current.descriptors:
             syllable += c
