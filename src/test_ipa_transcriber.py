@@ -201,14 +201,63 @@ def test_syncopate_schwas_short():
 
 def test_nasal_place_assimilation():
     text = "anpanfant̪anɖʱanjanganɢ"
-    expected = "ampaɱfant̪aɳɖʱaɲjaŋgaɴɢ"
+    expected = "ampamfant̪aɳɖʱaɲjaŋgaɴɢ"
     actual = t.assimilate_nasal_place(text)
+    assert actual == expected
+
+
+def test_add_syllable_boundaries_monosyllabic():
+    text = "sər"
+    expected = "sər"
+    actual = t.add_syllable_boundaries(text)
+    assert actual == expected
+
+
+def test_add_syllable_boundaries_long_vowels():
+    text = "meːraː"
+    expected = "meː.raː"
+    actual = t.add_syllable_boundaries(text)
+    assert actual == expected
+
+
+def test_add_syllable_boundaries_geminate():
+    text = "pənnaː"
+    expected = "pən.naː"
+    actual = t.add_syllable_boundaries(text)
+    assert actual == expected
+
+
+def test_add_syllable_boundaries_double_cluster():
+    text = "sətjə"
+    expected = "sət.jə"
+    actual = t.add_syllable_boundaries(text)
+    assert actual == expected
+
+
+def test_add_syllable_boundaries_triple_cluster():
+    text = "vəst̪rəm"
+    expected = "vəs.t̪rəm"
+    actual = t.add_syllable_boundaries(text)
+    assert actual == expected
+
+
+def test_add_syllable_boundaries_final_cluster():
+    text = "əŋk"
+    expected = "əŋk"
+    actual = t.add_syllable_boundaries(text)
+    assert actual == expected
+
+
+def test_add_syllable_boundaries_polysyllabic():
+    text = "nɪrənt̪əraːnd̪ʱəkaːrɪt̪"
+    expected = "nɪ.rən.t̪ər.aːn.d̪ʱə.kaː.rɪt̪"
+    actual = t.add_syllable_boundaries(text)
     assert actual == expected
 
 
 def test_transcribe_ipa():
     text = "प्रणाम मेरा नाम और अंक नमकीन हैं "
-    expected = "prəɳaːm meːraː naːm ɔːr ̃əŋk nəmkiːn ɦ̃ɛː"
+    expected = "prə.ɳaːm meː.raː naːm ɔːr ̃əŋk nəm.kiːn ɦ̃ɛː"
     actual = t.transcribe_to_ipa(text)
     assert actual == expected
 

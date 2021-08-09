@@ -2,7 +2,7 @@ import unicodedata
 from constants import *
 import logging
 from ipapy import UNICODE_TO_IPA as UNICODE_TO_IPA_CHAR
-from ipapy.ipachar import IPAConsonant
+from ipapy.ipachar import IPAConsonant, IPAVowel
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -47,6 +47,10 @@ def transcribe_to_ipa(text: str) -> str:
 
         ipa_word = assimilate_nasal_place(ipa_word)
         logging.debug(f"Nasal place assimilation: {ipa_word}")
+        ipa_words.append(ipa_word)
+
+        ipa_word = add_syllable_boundaries(ipa_word)
+        logging.debug(f"Syllable boundaries: {ipa_word}")
         ipa_words.append(ipa_word)
 
     ipa = " ".join(ipa_words)
@@ -214,7 +218,7 @@ def assimilate_nasal_place(word: str) -> str:
                     if 'bilabial' in next.descriptors:
                         to_add = 'm'
                     if 'labio-dental' in next.descriptors:
-                        to_add = 'ɱ'
+                        to_add = 'm'
                     if 'alveolar' in next.descriptors:
                         to_add = 'n'
                     if 'retroflex' in next.descriptors:
@@ -227,3 +231,39 @@ def assimilate_nasal_place(word: str) -> str:
                         to_add = 'ɴ'
         cleaned += to_add
     return cleaned
+
+
+def add_syllable_boundaries(word: str) -> str:
+    syllables = []
+    contains_vowel = False
+    syllable = ""
+    for i, c in enumerate(word):
+        current = UNICODE_TO_IPA_CHAR[c]
+        if i == len(word) - 1:
+            syllable += c
+            syllables.append(syllable)
+            break
+        if "consonant" in current.descriptors:
+            next_char = None
+            skip = 0
+            while next_char is None or (
+                    "vowel" not in next_char.descriptors and "consonant" not in next_char.descriptors):
+                if i+1+skip == len(word):
+                    syllable += c
+                    break
+                next_char = UNICODE_TO_IPA_CHAR[word[i+1+skip]]
+                skip += 1
+            if contains_vowel:
+                if "vowel" in next_char.descriptors:
+                    syllables.append(syllable)
+                    syllable = ""
+                    contains_vowel = False
+            syllable += c
+        elif "vowel" in current.descriptors:
+            syllable += c
+            contains_vowel = True
+        else:
+            syllable += c
+
+
+    return '.'.join(syllables)
