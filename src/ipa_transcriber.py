@@ -234,6 +234,7 @@ def assimilate_nasal_place(word: str) -> str:
     return cleaned
 
 
+# TODO: handle affricate cases (currently treated as two consonants)
 def add_syllable_boundaries(word: str) -> str:
     syllables = []
     contains_vowel = False
