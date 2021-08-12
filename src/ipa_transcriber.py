@@ -2,7 +2,7 @@ import unicodedata
 from constants import *
 import logging
 from ipapy import UNICODE_TO_IPA as UNICODE_TO_IPA_CHAR
-from ipapy.ipachar import IPAConsonant, IPAVowel
+from ipapy.ipachar import IPAConsonant
 import util
 
 
@@ -187,7 +187,7 @@ def transcribe_chandrabindus_and_anuswaras(chars: list) -> list:
         if chars[i] == 'DEVANAGARI SIGN CANDRABINDU' or chars[i] == 'DEVANAGARI SIGN ANUSVARA':
             if chars[i-1] == 'ə':
                 nasalized = "̃" + 'ə'
-            elif util.is_vowel(chars[i-1]):
+            elif util.is_vowel(chars[i - 1]):
                 nasalized = '̃' + UNICODE_TO_IPA[chars[i-1]]
             else:
                 raise ValueError(f"invalid input, non-vowel {chars[i-1]} precedes chandrabindu or bindu")
@@ -196,7 +196,7 @@ def transcribe_chandrabindus_and_anuswaras(chars: list) -> list:
                 if i == len(chars)-1:
                     if chars[i-1] == 'ə':
                         nasalized += 'm'
-                elif util.is_consonant(chars[i+1]):
+                elif util.is_consonant(chars[i + 1]):
                     nasalized += 'n'
 
             del cleaned[-1]
