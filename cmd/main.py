@@ -1,4 +1,5 @@
 import ipa_transcriber as t
+import json
 
 vowels = "क का कि की के कै कु कू को कौ कं काँ कः कृ "
 vowel_letters = "अ आ इ ई ए ऐ उ ऊ ओ औ ऋ "
@@ -9,5 +10,9 @@ virama = "क्र क् "
 sample_text = "प्रणाम मेरा नाम नमकीन है"
 text = sample_text
 
-ipa = t.transcribe_to_ipa(text)
-print(ipa)
+def lambda_handler(event, context):
+    ipa = t.transcribe_to_ipa(event.body)
+    return {
+        'statusCode': 200,
+        'body': json.dumps(ipa)
+    }
