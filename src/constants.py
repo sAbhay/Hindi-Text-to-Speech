@@ -141,10 +141,9 @@ UNICODE_TO_IPA = {
 }
 
 VOWEL_LETTERS = "अ आ इ ई ए ऐ उ ऊ ओ औ ऋ"
-
-"""
-ज्ञ = 'DEVANAGARI LETTER JA', 'DEVANAGARI SIGN VIRAMA', 'DEVANAGARI LETTER NYA' = 'gj'
-ख़ = 'DEVANAGARI LETTER KHA', DEVANAGARI SIGN NUKTA' = 'x'
-झ़ = 'DEVANAGARI LETTER JHA', DEVANAGARI SIGN NUKTA' = 'ʒ'
-क्र = 'DEVANAGARI LETTER KA', 'DEVANAGARI SIGN VIRAMA', 'DEVANAGARI LETTER RA' = 'kr'
-"""
+VOWELS = "क का कि की के कै कु कू को कौ कं काँ कः कृ"
+CONSONANTS = "क ख ग घ ङ ह च छ ज झ ञ य श ट ठ ड ढ ड़ ढ़ ण र ष त थ द ध न ल स प फ ब भ म व "
+LOANS = "क़ ख़ ग़ ज़ झ़ फ़ "
+CONJUNCTIONS = "ज्ञ क्ष त्र श्र "
+VIRAMA = "क्र क् "
+SAMPLE_TEXT = "प्रणाम मेरा नाम नमकीन है"
