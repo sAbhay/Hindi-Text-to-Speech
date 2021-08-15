@@ -1,10 +1,9 @@
 import unicodedata
-from constants import *
 import logging
 from ipapy import UNICODE_TO_IPA as UNICODE_TO_IPA_CHAR
 from ipapy.ipachar import IPAConsonant
+from constants import *
 import util
-
 
 logging.basicConfig(level=logging.DEBUG)
 
